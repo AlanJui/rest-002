@@ -13,4 +13,12 @@ router.get('/healthcheck', function (req, res) {
   res.send(response);
 });
 
+router.get('/ilike/:icecreamChoice', function (req, res) {
+  var choice = req.params.icecreamChoice;
+  var response = {
+    message: `I like ${choice} tool!`
+  };
+  res.send(response);
+});
+
 module.exports = router;
