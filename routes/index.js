@@ -1,24 +1,18 @@
 var express = require('express');
 var router = express.Router();
 
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    // req.flash('error_msg', 'You are not logged in');
+    res.redirect('/users/login');
+  }
+}
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', ensureAuthenticated, function(req, res, next) {
   res.render('index', { title: 'RESTful API Server' });
-});
-
-router.get('/healthcheck', function (req, res) {
-  var response = {
-    message: 'OK'
-  };
-  res.send(response);
-});
-
-router.get('/ilike/:icecreamChoice', function (req, res) {
-  var choice = req.params.icecreamChoice;
-  var response = {
-    message: `I like ${choice} tool!`
-  };
-  res.send(response);
 });
 
 module.exports = router;
