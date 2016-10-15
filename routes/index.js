@@ -1,5 +1,18 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+
+const user = require('../model/user/user-router');
+
+// Routing Index
+router.use('/users', user);
+
+/* GET home page. */
+// router.get('/', function(req, res, next) {
+//   res.render('../views/index', { title: 'RESTful API Server' });
+// });
+router.get('/', ensureAuthenticated, function(req, res, next) {
+  res.render('../views/index', { title: 'RESTful API Server' });
+});
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -10,9 +23,5 @@ function ensureAuthenticated(req, res, next) {
   }
 }
 
-/* GET home page. */
-router.get('/', ensureAuthenticated, function(req, res, next) {
-  res.render('index', { title: 'RESTful API Server' });
-});
 
 module.exports = router;

@@ -1,37 +1,45 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var exphbs = require('express-handlebars');
-var expressValidator = require('express-validator');
-var flash = require('connect-flash');
-var session = require('express-session');
-var passport = require('passport');
-var localStrategy = require('passport-local');
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const exphbs = require('express-handlebars');
+const expressValidator = require('express-validator');
+const flash = require('connect-flash');
+const session = require('express-session');
+const passport = require('passport');
+const helmet = require('helmet');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+const mongoose = require('mongoose');
+const bluebird = require('bluebird');
+
+// Loading configuration
+const config = require('./config');
+
+// Loading routing rules
+const routes = require('./routes');
 
 // Connect to DB
-mongoose.connect('mongodb://localhost/loginApp');
-const db = mongoose.connection;
+mongoose.Promise = bluebird;
+mongoose.connect(config.mongo.url);
+// const db = mongoose.connection;
 
 // Init App
-var app = express();
+const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.engine('handlebars', exphbs({defaultLayout: 'layout'}));
-app.set('view engine', 'handlebars');
+// Enable Cross Domain
+app.use(helmet());
 
 // BodyParser midleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.engine('handlebars', exphbs({defaultLayout: 'layout'}));
+app.set('view engine', 'handlebars');
 
 // Set Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -83,7 +91,6 @@ app.use(logger('dev'));
 
 // Setup Routing
 app.use('/', routes);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

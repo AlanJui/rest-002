@@ -4,7 +4,7 @@ const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
-const User = require('../models/user');
+const User = require('./user');
 
 // /* GET users listing. */
 // router.get('/', function(req, res, next) {
@@ -13,7 +13,7 @@ const User = require('../models/user');
 
 // Show Register Form
 router.get('/register', function (req, res) {
-  res.render('users/register');
+  res.render('./user/register');
 });
 
 // Register User
@@ -39,7 +39,7 @@ router.post('/register', function (req, res) {
 
   if (errors) {
     // console.log(`Validation failed`);
-    res.render('users/register', {
+    res.render('./users/register', {
       errors: errors
     });
   } else {
@@ -94,7 +94,7 @@ passport.deserializeUser(function(id, done) {
 
 // Login Form
 router.get('/login', function (req, res) {
-  res.render('login');
+  res.render('./user/login');
 });
 
 router.post('/login',
