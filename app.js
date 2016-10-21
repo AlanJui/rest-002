@@ -25,13 +25,19 @@ mongoose.Promise = bluebird;
 mongoose.connect(config.mongo.url);
 // const db = mongoose.connection;
 
+// Bring in the Passport config after model is defined
+require('./lib/auth/passport-config');
+
 // Init App
 const app = express();
 
 // Enable Cross Domain
 app.use(helmet());
 
-// BodyParser midleware
+// Setup Logger
+app.use(logger('dev'));
+
+// BodyParser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -51,10 +57,6 @@ app.use(session({
   saveUninitialized: true,
   resave: true
 }));
-
-// Passport init
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Express Validator
 app.use(expressValidator({
@@ -87,7 +89,9 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use(logger('dev'));
+// Initialise Passport before using the route middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Setup Routing
 app.use('/', routes);
